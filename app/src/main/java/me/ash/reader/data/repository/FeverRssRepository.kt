@@ -147,10 +147,15 @@ class FeverRssRepository @Inject constructor(
                             title = Html.fromHtml(it.title ?: context.getString(R.string.empty)).toString(),
                             author = it.author,
                             rawDescription = it.html ?: "",
-                            shortDescription = (Readability4JExtended("", it.html ?: "")
-                                .parse().textContent ?: "")
-                                .take(110)
-                                .trim(),
+                            shortDescription = try {
+                                (Readability4JExtended("", it.html ?: "")
+                                    .parse().textContent ?: "")
+                                    .take(110)
+                                    .trim()
+                            } catch (e: Exception) {
+                                // ignore Readability4J exception
+                                ""
+                            },
                             fullContent = it.html,
                             img = rssHelper.findImg(it.html ?: ""),
                             link = it.url ?: "",
